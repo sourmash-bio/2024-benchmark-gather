@@ -1,0 +1,6 @@
+*.csv
+*~
+.snakemake
+benchmarks
+*.rocksdb
+*.sig.zip
