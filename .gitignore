@@ -4,3 +4,4 @@
 benchmarks
 *.rocksdb
 *.sig.zip
+.ipynb_checkpoints

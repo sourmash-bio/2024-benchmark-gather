@@ -5,9 +5,23 @@ DB="/group/ctbrowngrp/sourmash-db/gtdb-rs214/gtdb-rs214-k31.zip"
 
 rule all:
     input:
+        expand("{sample}.pygather.csv", sample=SAMPLES),
         expand("{sample}.fastgather.csv", sample=SAMPLES),
         expand("{sample}.fastmultigather_rocksdb.csv", sample=SAMPLES),
         expand("{sample}.multifastgather.csv", sample=SAMPLES),
+
+rule pygather:
+    input:
+        sig = "{sample}.trim.sig.zip",
+        db=DB,
+    output:
+        "{sample}.pygather.csv"
+    threads: 128
+    benchmark: "benchmarks/pygather.{sample}.txt"
+    shell: """
+        sourmash gather -k 31 --scaled 1000 {input.sig} {input.db} \
+           -o {output}
+    """
 
 rule fastgather:
     input:
