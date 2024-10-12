@@ -1,5 +1,5 @@
 SAMPLES, = glob_wildcards("{sample}.trim.sig.zip")
-print("found {len(SAMPLES)}")
+print(f"found {len(SAMPLES)}")
 
 DB="/group/ctbrowngrp/sourmash-db/gtdb-rs214/gtdb-rs214-k31.zip"
 
@@ -8,7 +8,7 @@ rule all:
         expand("{sample}.pygather.csv", sample=SAMPLES),
         expand("{sample}.fastgather.csv", sample=SAMPLES),
         expand("{sample}.fastmultigather_rocksdb.csv", sample=SAMPLES),
-        expand("{sample}.multifastgather.csv", sample=SAMPLES),
+        expand("{sample}.fastmultigather.csv", sample=SAMPLES),
 
 rule pygather:
     input:
@@ -48,7 +48,7 @@ rule make_rocksdb:
         sourmash scripts index -c {threads} -k 31 -s 1000 {input} -o {output}
     """
 
-rule multifastgather_rocksdb:
+rule fastmultigather_rocksdb:
     input:
         sig="{sample}.trim.sig.zip",
         db="gtdb-rs214-k31.rocksdb",
@@ -61,14 +61,14 @@ rule multifastgather_rocksdb:
             -o {output} -c {threads}
     """
 
-rule multifastgather:
+rule fastmultigather:
     input:
         sig="{sample}.trim.sig.zip",
         db=DB,
     output:
         actual="{sample}.gather.csv",
         prefetch="{sample}.prefetch.csv",
-        rename="{sample}.multifastgather.csv",
+        rename="{sample}.fastmultigather.csv",
     threads: 128
     benchmark:
         "benchmarks/fastmultigather.{sample}.txt",
