@@ -11,9 +11,10 @@
 #SBATCH --mail-user=titus@idyll.org
 
 [[ -z "$1" ]] && { echo "remember to specify conda environment" ; exit 1; }
+target=${2:-small}
 
 # initialize conda
-. ~/miniconda3/etc/profile.d/conda.sh
+module load conda
 
 # activate your desired conda environment
 conda activate $1
@@ -24,10 +25,10 @@ set -o errexit
 set -x
 
 # go to the directory you ran 'sbatch' in, OR just hardcode it...
-cd $SLURM_SUBMIT_DIR
+#cd $SLURM_SUBMIT_DIR
 
 # run workflow
-snakemake -c 64
+echo snakemake -c 64 $target
 
 # print out various information about the job
 env | grep SLURM            # Print out values of the current jobs SLURM environment variables

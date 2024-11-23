@@ -1,7 +1,16 @@
 SAMPLES, = glob_wildcards("{sample}.trim.sig.zip")
 print(f"found {len(SAMPLES)}")
 
+SMALL=['SRR1976948']
+
 DB="/group/ctbrowngrp/sourmash-db/gtdb-rs214/gtdb-rs214-k31.zip"
+
+rule small:
+    input:
+        expand("output/{sample}.pygather.csv", sample=SMALL),
+        expand("output/{sample}.fastgather.csv", sample=SMALL),
+        expand("output/{sample}.fastmultigather_rocksdb.csv", sample=SMALL),
+        expand("output/{sample}.fastmultigather.csv", sample=SMALL),
 
 rule all:
     input:

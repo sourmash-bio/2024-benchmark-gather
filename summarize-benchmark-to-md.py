@@ -2,6 +2,7 @@
 import sys
 import pandas as pd
 import argparse
+import os
 
 pd.options.display.precision = 1
 
@@ -31,7 +32,12 @@ def main():
 
     print(df_by_second.to_markdown(floatfmt=".1f"))
 
-    rocksdb_df = pd.read_csv(f'{args.bench_dir}/index.rocksdb.txt', sep='\t')
+    rocksdb_bench = f'{args.bench_dir}/index.rocksdb.txt'
+    if not os.path.exists(rocksdb_bench):
+        print("\n(no RocksDB benchmark exists.)")
+        return
+
+    rocksdb_df = pd.read_csv(rocksdb_bench, sep='\t')
     rocksdb_df = rocksdb_df[["h:m:s", "s", "max_rss"]]
 
     hms = list(rocksdb_df["h:m:s"])[0]
