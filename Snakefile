@@ -5,18 +5,18 @@ DB="/group/ctbrowngrp/sourmash-db/gtdb-rs214/gtdb-rs214-k31.zip"
 
 rule all:
     input:
-        expand("{sample}.pygather.csv", sample=SAMPLES),
-        expand("{sample}.fastgather.csv", sample=SAMPLES),
-        expand("{sample}.fastmultigather_rocksdb.csv", sample=SAMPLES),
-        expand("{sample}.fastmultigather.csv", sample=SAMPLES),
+        expand("output/{sample}.pygather.csv", sample=SAMPLES),
+        expand("output/{sample}.fastgather.csv", sample=SAMPLES),
+        expand("output/{sample}.fastmultigather_rocksdb.csv", sample=SAMPLES),
+        expand("output/{sample}.fastmultigather.csv", sample=SAMPLES),
 
 rule pygather:
     input:
         sig = "{sample}.trim.sig.zip",
         db=DB,
     output:
-        "{sample}.pygather.csv"
-    threads: 128
+        "output/{sample}.pygather.csv"
+    threads: 64
     benchmark: "benchmarks/pygather.{sample}.txt"
     shell: """
         sourmash gather -k 31 --scaled 1000 {input.sig} {input.db} \
@@ -28,8 +28,8 @@ rule fastgather:
         sig = "{sample}.trim.sig.zip",
         db=DB,
     output:
-        "{sample}.fastgather.csv"
-    threads: 128
+        "output/{sample}.fastgather.csv"
+    threads: 64
     benchmark: "benchmarks/fastgather.{sample}.txt"
     shell: """
         sourmash scripts fastgather -k 31 -s 1000 {input.sig} {input.db} \
@@ -40,8 +40,8 @@ rule make_rocksdb:
     input:
         db=DB,
     output:
-        directory("gtdb-rs214-k31.rocksdb"),
-    threads: 128
+        directory("output/gtdb-rs214-k31.rocksdb"),
+    threads: 64
     benchmark:
         "benchmarks/index.rocksdb.txt",
     shell: """
@@ -51,9 +51,9 @@ rule make_rocksdb:
 rule fastmultigather_rocksdb:
     input:
         sig="{sample}.trim.sig.zip",
-        db="gtdb-rs214-k31.rocksdb",
+        db="output/gtdb-rs214-k31.rocksdb",
     output:
-        "{sample}.fastmultigather_rocksdb.csv",
+        "output/{sample}.fastmultigather_rocksdb.csv",
     threads: 128
     benchmark: "benchmarks/fastmultigather_rocksdb.{sample}.txt"
     shell: """
@@ -68,8 +68,8 @@ rule fastmultigather:
     output:
         actual="{sample}.gather.csv",
         prefetch="{sample}.prefetch.csv",
-        rename="{sample}.fastmultigather.csv",
-    threads: 128
+        rename="output/{sample}.fastmultigather.csv",
+    threads: 64
     benchmark:
         "benchmarks/fastmultigather.{sample}.txt",
     shell: """
