@@ -33,8 +33,9 @@ sbatch run-sbatch.slurm <conda-env>
 ```
 ./summarize-benchmark-to-md.py  benchmarks
 ```
-will produce:
+will produce the following Markdown output:
 
+```
 | prefix                  |      s |   max_rss |
 |:------------------------|-------:|----------:|
 | fastmultigather_rocksdb |  120.5 |       0.5 |
@@ -43,3 +44,4 @@ will produce:
 | pygather                | 2783.4 |      13.8 |
 
 Cost of RocksDB indexing: 4:46:17 / 17177s / 14.3 GB
+```
