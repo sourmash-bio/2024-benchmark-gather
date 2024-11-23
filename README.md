@@ -27,3 +27,19 @@ snakemake -c 64
 ```
 sbatch run-sbatch.slurm <conda-env>
 ```
+
+## Summarize results to Markdown
+
+```
+./summarize-benchmark-to-md.py  benchmarks
+```
+will produce:
+
+| prefix                  |      s |   max_rss |
+|:------------------------|-------:|----------:|
+| fastmultigather_rocksdb |  120.5 |       0.5 |
+| fastgather              |  146.7 |      13.1 |
+| fastmultigather         |  476.4 |      12.9 |
+| pygather                | 2783.4 |      13.8 |
+
+Cost of RocksDB indexing: 4:46:17 / 17177s / 14.3 GB
