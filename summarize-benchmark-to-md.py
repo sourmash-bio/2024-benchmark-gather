@@ -12,7 +12,7 @@ def main():
     args = p.parse_args()
 
     samples = ['SRR12324253', 'SRR1976948', 'SRR5650070', 'SRR606249']
-    prefixes = [ 'fastmultigather', 'fastmultigather_rocksdb', 'fastgather', 'pygather']
+    prefixes = [ 'fastmultigather', 'fastmultigather_rocksdb', 'fastgather', 'pygather', 'pygather_rocksdb']
     df_list = []
 
     # load all the CSV files

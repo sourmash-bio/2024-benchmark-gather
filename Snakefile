@@ -8,6 +8,7 @@ DB="/group/ctbrowngrp/sourmash-db/gtdb-rs214/gtdb-rs214-k31.zip"
 rule small:
     input:
         expand("output/{sample}.pygather.csv", sample=SMALL),
+        expand("output/{sample}.pygather_rocksdb.csv", sample=SMALL),
         expand("output/{sample}.fastgather.csv", sample=SMALL),
         expand("output/{sample}.fastmultigather_rocksdb.csv", sample=SMALL),
         expand("output/{sample}.fastmultigather.csv", sample=SMALL),
@@ -15,6 +16,7 @@ rule small:
 rule all:
     input:
         expand("output/{sample}.pygather.csv", sample=SAMPLES),
+        expand("output/{sample}.pygather_rocksdb.csv", sample=SAMPLES),
         expand("output/{sample}.fastgather.csv", sample=SAMPLES),
         expand("output/{sample}.fastmultigather_rocksdb.csv", sample=SAMPLES),
         expand("output/{sample}.fastmultigather.csv", sample=SAMPLES),
@@ -30,6 +32,19 @@ rule pygather:
     shell: """
         sourmash gather -k 31 --scaled 1000 {input.sig} {input.db} \
            -o {output}
+    """
+
+rule pygather_rocksdb:
+    input:
+        sig = "{sample}.trim.sig.zip",
+        db="output/gtdb-rs214-k31.rocksdb",
+    output:
+        "output/{sample}.pygather_rocksdb.csv"
+    threads: 64
+    benchmark: "benchmarks/pygather_rocksdb.{sample}.txt"
+    shell: """
+        sourmash gather -k 31 --scaled 1000 {input.sig} {input.db} \
+           -o {output} --no-prefetch
     """
 
 rule fastgather:
@@ -75,14 +90,12 @@ rule fastmultigather:
         sig="{sample}.trim.sig.zip",
         db=DB,
     output:
-        actual="{sample}.gather.csv",
         prefetch="{sample}.prefetch.csv",
-        rename="output/{sample}.fastmultigather.csv",
+        csv="output/{sample}.fastmultigather.csv",
     threads: 64
     benchmark:
         "benchmarks/fastmultigather.{sample}.txt",
     shell: """
         sourmash scripts fastmultigather {input.sig} {input.db} -k 31 -s 1000 \
-           -c {threads}
-        cp {output.actual} {output.rename}
+           -c {threads} -o {output.csv}
     """
